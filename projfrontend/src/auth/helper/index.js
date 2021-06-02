@@ -17,7 +17,7 @@ export const signup = user => {
 };
 
 
-export const signin = user => {
+export const signin = (user) => {
 
     const formdata = new FormData()
 

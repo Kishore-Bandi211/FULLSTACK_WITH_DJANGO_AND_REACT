@@ -1,29 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ImageHelper from "./helper/ImageHelper"
  import {Redirect} from "react-router-dom"
 import { addItemToCart , removeItemFromCart} from './helper/Carthelper'
+import { isAuthenticated } from '../auth/helper'
 // TODO Deal with this later
 
 
- const isAuthenticated = true
+ 
 
 
 const Card = ({
     product,
     addToCart = true,
-    removeFromCart = false
+    removeFromCart = false,
+    reload=undefined,
+    setReload= f => f,
+    //function(f){return f}
 }) => {
+
+const [redirect,setRedirect] = useState(false)
 
     const cartTitle=product ? product.name : "A photo from pexels"
     const cartDescription=product ? product.description : "Default Description"
     const cartPrice = product? product.price : "Default"
     const addtoCart = () => {
-        if(isAuthenticated ){
-          addItemToCart(product, ()=>{})
+        if(isAuthenticated()  ){
 
+          addItemToCart(product, () => setRedirect(true))
+          getAredirect();
             console.log("Added to Cart")
 
         } else{
+          addItemToCart(product, () => setRedirect(true))
+          getAredirect();
             console.log("Login Please!")
         }
     };
@@ -38,7 +47,7 @@ const Card = ({
         return (
             addToCart && (
                     <button
-                onClick={addToCart}
+                onClick={addtoCart}
                 className="btn btn-block btn-outline-success mt-2 mb-2"
               >
                 Add to Cart
@@ -57,7 +66,8 @@ const Card = ({
                 onClick={() => {
                     // TODO : handle this too
 
-                    removeItemFromCart(product.id)
+                    removeItemFromCart(product.id);
+                    setReload(!reload)
                     console.log("Product removed from cart")
                 }}
                 className="btn btn-block btn-outline-danger mt-2 mb-2"
@@ -78,6 +88,7 @@ const Card = ({
       <div className="card text-white bg-dark border border-info ">
         <div className="card-header lead">{cartTitle}</div>
         <div className="card-body">
+          {getAredirect(redirect)}
           <ImageHelper product={product}/>
 
           
